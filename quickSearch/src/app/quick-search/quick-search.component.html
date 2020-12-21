@@ -1,0 +1,6 @@
+<form>
+    <label title="quick search" id="quick_search_label"> Search
+        <input type='text' (input)="performSearch($event)">
+    </label>
+    <app-drop-down-menu [ngClass]="{'hidden': !hasSearchResults}" [users]="users"></app-drop-down-menu>
+</form>
