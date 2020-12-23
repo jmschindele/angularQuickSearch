@@ -1,6 +1,13 @@
 <form>
-    <label title="quick search" id="quick_search_label"> Search
-        <input type='text' (input)="performSearch($event)">
-    </label>
-    <app-drop-down-menu [ngClass]="{'hidden': !hasSearchResults}" [users]="users"></app-drop-down-menu>
+  <label title="quick search" id="quick_search_label">
+    Search
+    <input type="text" (input)="performSearch($event)" />
+  </label>
+  <!-- <app-drop-down-menu [ngClass]="{'hidden': !hasSearchResults}" [users]="users"></app-drop-down-menu> -->
+  <ul [ngClass]="{'hidden': users.length == 0}">
+    <li *ngFor="let user of users">
+      {{ user.s_text }}, {{ user.city }}, {{ user.state }}
+    </li>
+  </ul>
 </form>
+

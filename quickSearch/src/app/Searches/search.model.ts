@@ -8,10 +8,10 @@ export interface SearchResponse {
     city?: string,
     state?: string,
     ph?: {
-        M?: number,
-        H?: number,
-        C?: number,
-        W?: number
+        M?: string,
+        H?: string,
+        C?: string,
+        W?: string
     },
     email?: string,
     email_2?: string,
