@@ -4,13 +4,11 @@ import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { QuickSearchComponent } from './quick-search/quick-search.component';
-import { DropDownMenuComponent } from './drop-down-menu/drop-down-menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    QuickSearchComponent,
-    DropDownMenuComponent
+    QuickSearchComponent
   ],
   imports: [
     BrowserModule,
