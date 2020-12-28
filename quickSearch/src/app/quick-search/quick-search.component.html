@@ -1,13 +1,20 @@
-<form>
-  <label title="quick search" id="quick_search_label">
-    Search
-    <input type="text" (input)="performSearch($event)" />
+<form (focus)='handleFormFocus($event)' (blur)='handleFormBlur($event)'>
+  <label>
+    <fa *ngIf='!isSearching && !hasTextContent' name='search'></fa>
+    <fa *ngIf='isSearching' name='spinner' animation='spin'></fa>
+    <fa *ngIf='!isSearching && hasTextContent' name='times-circle' (click)='handleClearInput($event)'></fa>
+    <span class="hidden">Global Search</span>
+    <input type="text" (input)="performSearch($event)" id='global_search_input'/>
   </label>
-  <!-- <app-drop-down-menu [ngClass]="{'hidden': !hasSearchResults}" [users]="users"></app-drop-down-menu> -->
-  <ul [ngClass]="{'hidden': users.length == 0}">
+  <div role="button" class='button-group'>
+    <button *ngFor='let filter of filters' id='{{filter.name}}_filter' (click)="handleFilterClick($event)">
+      <fa name="{{filter.icon}}" size='2x'></fa>
+      <input type="checkbox" aria-hidden='true' class='gsfilter hidden' id='{{filter.name}}_entity_filter'/>
+    </button>
+  </div>
+  <ul [ngClass]="{ hidden: users.length == 0 }">
     <li *ngFor="let user of users">
       {{ user.s_text }}, {{ user.city }}, {{ user.state }}
     </li>
   </ul>
 </form>
-
