@@ -1,7 +1,90 @@
+$dark-grey: #444;
+$unselected-icon-color: #444;
+$unselected-icon-background: #fff;
+$selected-icon-color: #fff;
+$selected-icon-background: $dark-grey;
+$icon-border-color: $dark-grey;
+
 #quick_search_label {
-    font-size: 0;
+  font-size: 0;
 }
 
 .hidden {
-    display: none;
+  display: none;
+}
+
+.selected_filter_icon {
+  color: $selected-icon-color;
+  background-color: $selected-icon-background;
+}
+
+input[type="text"] {
+  border: none;
+}
+
+input[type="text"]:focus {
+  border: none;
+  outline: none;
+}
+
+form {
+  border: solid 1px $dark-grey;
+  border-radius: 3px;
+  min-height: 24px;
+  max-width: 400px;
+  padding-top: 5px;
+
+  label {
+    padding-left: 8px;
+  }
+  input {
+    margin-left: 8px;
+    margin-bottom: 5px;
+    width: 80%;
+  }
+
+  input:focus {
+    border-bottom: 1px solid $dark-grey;
+  }
+
+  div {
+    display: flex;
+    width: 100%;
+    margin-left: 0px;
+    padding-left: 0px;
+
+    button {
+      color: $unselected-icon-color;
+      background: $unselected-icon-background;
+      flex-direction: row;
+      flex: 1 1 2rem;
+      border: solid 1px $icon-border-color;
+      border-left: none;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    button:focus {
+      outline: none;
+      box-shadow: 0px 0px 1px 1px rgb(94, 94, 255) inset;
+      background-color: #ddd;
+
+      .selected {
+        box-shadow: 0px 0px 3px $dark-grey inset;
+        background-color: #eee;
+      }
+    }
+
+    button:last-of-type {
+      border-right: none;
+    }
+  }
+
+  ul > li {
+    list-style: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    border-bottom: 1px solid #ccc;
+    border-radius: none;
+  }
 }

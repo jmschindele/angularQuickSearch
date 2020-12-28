@@ -13,11 +13,6 @@ export class SearchService {
 
   getSearchResponses() {
     return this.http.get<SearchResponse[]>("http://localhost:3000/api/searchResponse");
-    //   .subscribe(data => {
-    //     this.searchResponses = data;
-    //     console.log(data);
-    //     this.searchResponsesUpdated.next(data);
-    //   });
   }
 
   getSearchResponsesUpdatedListener() {
