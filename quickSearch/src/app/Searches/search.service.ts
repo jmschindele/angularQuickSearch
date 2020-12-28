@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 
 import { SearchResponse } from "./search.model";
+import { ConsoleReporter } from "jasmine";
 
 @Injectable({ providedIn: "root" })
 export class SearchService {
@@ -11,8 +12,16 @@ export class SearchService {
 
   constructor(private http: HttpClient) {}
 
-  getSearchResponses() {
-    return this.http.get<SearchResponse[]>("http://localhost:3000/api/searchResponse");
+  getSearchResponses(searchParams: any[]) {
+
+    let params = new HttpParams();
+    let keyName: string;
+    searchParams.map(param => {
+      keyName = Object.keys(param)[0];
+      params = params.append(keyName, param[keyName])
+    });
+
+    return this.http.get<SearchResponse[]>("http://localhost:3000/api/searchResponse", {params});
   }
 
   getSearchResponsesUpdatedListener() {

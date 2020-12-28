@@ -38,16 +38,28 @@ export class QuickSearchComponent implements OnInit {
 
     this.isSearching = true;
     this.hasTextContent = e.target.value.length > 0;
-    if (this.hasTextContent && !this.activeFilters.length) {
-      this.searchService.getSearchResponses()
+    let params: any[] = [];
+
+    let queryText = {
+      queryText: e.target.value
+    };
+
+    params.push(queryText);
+
+    if (this.activeFilters.length) {
+      let entitiesFilters = {
+        entities: this.activeFilters
+      };
+      params.push(entitiesFilters);
+    }
+
+    if (this.hasTextContent) {
+      this.searchService.getSearchResponses(params)
       .subscribe(res => {
         this.users = res;
         this.isSearching = false;
       });
-    } else if (this.hasTextContent && this.activeFilters.length) {
-
-      //add query for parameterized search based on entities
-    } else {
+    }  else {
       this.users = [];
       this.isSearching = false;
     }
@@ -55,11 +67,15 @@ export class QuickSearchComponent implements OnInit {
   };
 
   handleFilterClick = e => {
+
     e.preventDefault();
+
     let checkbox = e.currentTarget.querySelector('input');
     let selectedFilter = checkbox.id.split('_entity_filter')[0];
 
+    document.getElementById(e.currentTarget.id).classList.toggle('selected');
     checkbox.checked = !checkbox.checked;
+
     if (this.activeFilters.indexOf(selectedFilter) === -1) {
       this.activeFilters.push(selectedFilter)
     } else {
@@ -68,8 +84,7 @@ export class QuickSearchComponent implements OnInit {
   }
 
   handleClearInput = e => {
-    console.log(document.querySelector('#global_search_input').textContent)
-    document.querySelector('#global_search_input').innerHTML = '';
+    // document.findElementById('global_search_input').value = '';
   }
 
 }
