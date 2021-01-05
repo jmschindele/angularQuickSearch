@@ -1,10 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Injector } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
 import {HttpClientModule} from '@angular/common/http';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
 
 import { AppComponent } from './app.component';
 import { QuickSearchComponent } from './quick-search/quick-search.component';
+
 
 @NgModule({
   declarations: [
@@ -16,7 +18,20 @@ import { QuickSearchComponent } from './quick-search/quick-search.component';
     HttpClientModule,
     AngularFontAwesomeModule
   ],
+  entryComponents: [
+    QuickSearchComponent,
+  ],
   providers: [],
-  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+  constructor(private injector: Injector) {}
+
+  ngDoBootstrap() {
+    const el = createCustomElement(QuickSearchComponent, {injector: this.injector});
+
+    customElements.define('quick-search', el);
+
+  }
+
+ }

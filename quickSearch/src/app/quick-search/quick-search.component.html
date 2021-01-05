@@ -1,15 +1,38 @@
-<form (focus)='handleFormFocus($event)' (blur)='handleFormBlur($event)'>
+<i class="fas fa-search"></i>
+<form>
   <label>
-    <fa *ngIf='!isSearching && !hasTextContent' name='search'></fa>
-    <fa *ngIf='isSearching' name='spinner' animation='spin'></fa>
-    <fa *ngIf='!isSearching && hasTextContent' name='times-circle' (click)='handleClearInput($event)'></fa>
+    <span *ngIf="!isSearching && !hasTextContent"
+      ><i class="fas fa-search"></i
+    ></span>
+    <span *ngIf="isSearching"><i class="fas fa-spinner spin"></i></span>
+    <span
+      *ngIf="!isSearching && hasTextContent"
+      name="times-circle"
+      (click)="handleClearInput($event)"
+    >
+      <i class="fas fa-times-circle"></i>
+    </span>
+
     <span class="hidden">Global Search</span>
-    <input type="text" (input)="performSearch($event)" id='global_search_input'/>
+    <input
+      type="text"
+      (input)="performSearch($event)"
+      id="global_search_input"
+    />
   </label>
-  <div role="button" class='button-group'>
-    <button *ngFor='let filter of filters' id='{{filter.name}}_filter' (click)="handleFilterClick($event)">
-      <fa name="{{filter.icon}}" size='2x'></fa>
-      <input type="checkbox" aria-hidden='true' class='gsfilter hidden' id='{{filter.name}}_entity_filter'/>
+  <div role="button" class="button-group">
+    <button
+      *ngFor="let filter of filters"
+      id="{{ filter.name }}_filter"
+      (click)="handleFilterClick($event)"
+    >
+      <span><i class="fas fa-{{ filter.icon }} 2x"></i></span>
+      <input
+        type="checkbox"
+        aria-hidden="true"
+        class="gsfilter hidden"
+        id="{{ filter.name }}_entity_filter"
+      />
     </button>
   </div>
   <ul [ngClass]="{ hidden: users.length == 0 }">
