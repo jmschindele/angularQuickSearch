@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { SearchResponse } from "../Searches/search.model";
 import { SearchService } from "../Searches/search.service";
@@ -18,8 +18,10 @@ class Filter  {
 @Component({
   selector: "app-quick-search",
   templateUrl: "./quick-search.component.html",
-  styleUrls: ["./quick-search.component.scss"]
+  styleUrls: ["./quick-search.component.scss"],
+  encapsulation: ViewEncapsulation.ShadowDom,
 })
+
 export class QuickSearchComponent implements OnInit {
   users: SearchResponse[] = [];
   hasSearchResults: boolean = this.users.length > 1;
@@ -28,7 +30,20 @@ export class QuickSearchComponent implements OnInit {
   activeFilters: String[] = [];
 
   @Input()
-  filters: Filter[] = [];
+  filters  = 
+  [
+    {name: 'Recruits', icon: 'user-circle'}, 
+    {name:'Student-Athletes', icon:'user'},
+    {name: 'Contacts', icon:'address-book'},
+    {name: 'ARMS Users', icon:'user-secret'},
+    {name: 'Schools', icon: 'university'},
+    {name: 'Groups', icon: 'users'},
+    {name: 'Boards', icon:'object-group'},
+    {name: 'Events', icon:'calendar'}
+  ];
+
+  @Input()
+  searchUrl: String;
 
   constructor(private http: HttpClient, private searchService: SearchService) {}
 
@@ -44,7 +59,7 @@ export class QuickSearchComponent implements OnInit {
       queryText: e.target.value
     };
 
-    params.push(queryText);
+    // params.push(queryText);
 
     if (this.activeFilters.length) {
       let entitiesFilters = {

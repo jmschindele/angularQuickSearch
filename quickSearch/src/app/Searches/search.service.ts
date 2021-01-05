@@ -3,7 +3,6 @@ import { Subject } from "rxjs";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 
 import { SearchResponse } from "./search.model";
-import { ConsoleReporter } from "jasmine";
 
 @Injectable({ providedIn: "root" })
 export class SearchService {
