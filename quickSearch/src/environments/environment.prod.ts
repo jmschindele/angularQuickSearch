@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  imageUrl: '/arms/s/img/quick_search/'
 };

@@ -15,12 +15,14 @@ export class SearchService {
 
     let params = new HttpParams();
     let keyName: string;
+
     searchParams.map(param => {
       keyName = Object.keys(param)[0];
       params = params.append(keyName, param[keyName])
     });
 
-    return this.http.get<SearchResponse[]>("http://localhost:3000/api/searchResponse", {params});
+    return this.http.get<SearchResponse>("/arms/search", {params});
+
   }
 
   getSearchResponsesUpdatedListener() {

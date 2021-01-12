@@ -1,96 +1,200 @@
 $dark-grey: #323a45;
+$light-grey: #000;
+// $focus-blue: #6D9DE0;
+$focus-blue: #c24700;
+// $hightlight-blue: #317AE2;
+$hightlight-blue: #474747;
 $unselected-icon-color: #444;
 $unselected-icon-background: #fff;
 $selected-icon-color: #eee;
-$selected-icon-background: $dark-grey;
+$icon-background-color: #f7f7f7;
 $icon-border-color: $dark-grey;
+$mainCardTextSize: 17px;
+$subCardTextSize: 13px;
+$cardCol1Width: 50px;
+$cardCol2Width: 250px;
+$containerTopPadding: 7px;
+$containerBottomPadding: 7px;
 
 #quick_search_label {
-  font-size: 0;
+  font-size: 0 !important;
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
-.selected_filter_icon {
-  color: $selected-icon-color;
-  background-color: $selected-icon-background;
-}
-
-input[type="text"] {
-  border: none;
-}
-
-input[type="text"]:focus {
-  border: none;
-  outline: none;
-}
-
-form {
-  border: solid 1px $dark-grey;
-  border-radius: 3px;
-  min-height: 24px;
-  max-width: 400px;
-  padding-top: 5px;
+div#quick-search-form {
+  background-color: white !important;
+  border: solid 3px $light-grey;
+  border-radius: 1000px !important;
+  height: 24px !important;
+  max-width: 400px !important;
+  padding-top: 5px !important;
+  color: $dark-grey !important;
 
   label {
-    padding-left: 8px;
-
-    fa {
-        font-size: 25px;
-    }
+    padding-left: 8px !important;
   }
+
   input {
-    margin-left: 8px;
-    margin-bottom: 5px;
-    width: 80%;
+    margin-left: 8px !important;
+    margin-bottom: 5px !important;
+    width: 80% !important;
+    border: none !important;
+    display: inline-block !important;
+    padding: none !important;
+    box-shadow: none !important;
+  }
+  
+  input[type="text"]:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
-  input:focus {
-    border-bottom: 1px solid $dark-grey;
-  }
+}
 
-  div {
-    display: flex;
-    width: 100%;
-    margin-left: 0px;
-    padding-left: 0px;
+.form-focus {
+  // border-color: $focus-blue !important;
+  border: solid 3px $focus-blue !important;
+  i {
+    color: $focus-blue !important;
+  }
+}
+
+.pop-out-container {
+  background-color: white !important;
+  border-radius: 4px !important;
+  margin-top: 3px !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 0px,
+              rgba(0, 0, 0, 0.06) 0px 3px 14px 0px, 
+              rgba(0, 0, 0, 0.05) 0px 8px 10px 0px, 
+              rgba(0, 0, 0, 0.24) 0px 0px 2px 0px !important;
+
+  div:not(.hidden) {
+    display: flex !important;
+    width: 398px !important;
+    margin: 0 auto !important;
+    padding-left: 0px !important;
+
+    .hidden {
+      display: none !important;
+    }
 
     button {
-      color: $unselected-icon-color;
-      background: $unselected-icon-background;
-      flex-direction: row;
-      flex: 1 1 2rem;
-      border: solid 1px $icon-border-color;
-      border-left: none;
-      padding-top: 5px;
-      padding-bottom: 5px;
+      color: $unselected-icon-color !important;
+      background: $icon-background-color !important;
+      flex-direction: row !important;
+      flex: 1 1 2rem !important;
+      border: none !important; 
+      border-bottom: solid 1px #B9BABB !important;
+      padding-top: 15px !important;
+      padding-bottom: 15px !important;
+    }
+
+    button:first-of-type {
+      border-top-left-radius: 4px !important;
+    }
+
+    button:last-of-type {
+      border-top-right-radius: 4px !important;
     }
 
     button.selected {
-        box-shadow: 0px 0px 3px $dark-grey inset;
-        color: $selected-icon-color;
-        background-color: $selected-icon-background;
+      border-bottom: solid 3px $focus-blue !important;
       }
 
 
     button:focus {
-      outline: none;
-      box-shadow: 0px 0px 1px 1px rgb(94, 94, 255) inset;
-    //   background-color: #ddd;
-    }
-
-    button:last-of-type {
-      border-right: none;
+      border-bottom: solid 3px $focus-blue !important;
+      outline: none !important;
     }
   }
 
-  ul > li {
-    list-style: none;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 15px;
-    border-bottom: 1px solid #ccc;
-    border-radius: none;
+  li {
+    list-style: none !important;
+    font-size: 15px !important;
+    border-radius: none !important;
   }
+
+  li.container-heading {
+    font-size: 20px !important;
+    color: #757575 !important;
+    width: 90% !important;
+    padding-top: 16px !important;
+    padding-bottom: $containerBottomPadding !important;
+    padding-left: 15px;
+  }
+
+  li:not(.container-heading):hover {
+    background-color: $hightlight-blue !important;
+    color: white !important;
+    cursor: pointer !important;
+  }
+  
 }
+
+.arms-quick-search {
+  width: 400px !important;
+}
+
+ul {
+  padding-left: 0 !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  overflow-y: auto!important;
+  max-height: calc(80vh) !important;
+}
+
+.card-img {
+  grid-area: icon-image !important;
+  // place-self: center !important;
+  place-self: start center !important;
+  font-size: 22px !important;
+}
+
+.card-main {
+  grid-area: mainText !important;
+  font-size: $mainCardTextSize !important;
+}
+.card-sub {
+  grid-area: subText !important;
+  font-weight: lighter !important;
+  font-size: $subCardTextSize !important;
+}
+
+.container {
+  color: #474747 !important;
+  width: 100% !important;
+  padding-top: $containerTopPadding !important;
+  padding-bottom: $containerBottomPadding !important;
+  display: grid !important;
+  grid-template-columns: $cardCol1Width $cardCol2Width !important;
+  grid-template-rows: auto !important;
+  grid-template-areas: 
+    "icon-image mainText"
+    "icon-image subText" !important;
+
+}
+
+// .container-heading {
+//   color: #757575 !important;
+//   width: 90% !important;
+//   padding-top: $containerTopPadding !important;
+//   padding-bottom: $containerBottomPadding !important;
+//   padding-left: 15px;
+// }
+
+.no_results {
+  margin: 20px 50px 20px 0px;
+  font-style: italic;
+  color: #777;
+  font-size: 20px;
+}
+
+.filter_toggle_button {
+  font-size: 17px;
+}
+
+

@@ -1,4 +1,13 @@
 export interface SearchResponse {
+    hits: SearchResult[],
+    query: any,
+    duration: any,
+    elasticQuery: any,
+    hitCount: any
+}
+
+export interface SearchResult {
+    score?: number,
     pk_id?: number,
     e_type?: string,
     org?: string,
@@ -17,5 +26,7 @@ export interface SearchResponse {
     email_2?: string,
     twit?: string,
     u_id?: string,
-    ncaa_e_num?: string
+    ncaa_e_num?: string,
+    shown?: boolean,
+    url?: string
 }
