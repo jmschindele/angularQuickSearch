@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
-<div class="arms-quick-search">
+<div class="arms-quick-search" (keydown)='handleInputKeypress($event)'>
 
 <div class='css-grid-form' id='quick-search-form'>
   <label>
@@ -17,111 +17,54 @@
     >
       <i class="fas fa-times-circle"></i>
     </span>
-
     <span class="hidden">Global Search</span>
     <input style="padding: 0 0 !important;" autocomplete="off"
       type="text"
       (input)="handleInput($event)"
       id="global_search_input"
       (focus)="handleInputFocus($event)"
-      (blur)="handleInputBlur($event)"
-    />
+      (blur)="handleBlur($event)"
+      />
   </label>
 </div>
 
 <div  [ngClass]="hasTextContent || showRecentItems ? 'pop-out-container' : 'hidden'">
-  <div role="button" [ngClass]="{'button-group': hasTextContent, 'hidden' : showRecentItems}">
-    <button  id="all_filter" (click)="handleFilterClick($event)" class='filter_toggle_button selected'>
+  <!-- [ngClass]="{'button-group': hasTextContent, 'hidden' : showRecentItems}" -->
+  <div role="button" *ngIf="showSearchResults || showNoResultsFound" class='button-group'>
+    <button  id="all_filter" (click)="handleFilterClick($event)" [ngClass]='{"filter_toggle_button": true,  "selected" : !activeFilter}' (blur)="handleBlur($event)">
       <span>ALL</span>
-      <input type="radio" aria-hidden="true" class="gsfilter hidden" name="entity_filter" id="all_entity_filter" checked />
+      <input type="radio" aria-hidden="true" class="gsfilter hidden" name="entity_filter" id="all_entity_filter" [checked]='activeFilter' />
     </button>
-    <button *ngFor="let filter of filters" id="{{ filter.name }}_filter" (click)="handleFilterClick($event)" class='filter_toggle_button tooltipme' title='{{filter.tipName}}'>
+    <button *ngFor="let filter of filters" id="{{ filter.name }}_filter" (click)="handleFilterClick($event)" [ngClass]='{"filter_toggle_button tooltipme": true, "selected": filter.name == activeFilter}' title='{{filter.tipName}}' (blur)="handleBlur($event)">
       <span><i class="{{ filter.icon }} 2x"></i></span>
       <input type="radio" aria-hidden="true" class="gsfilter hidden" name="entity_filter" id="{{ filter.name }}_entity_filter"/>
     </button>
   </div>
 
   <ul *ngIf="showRecentItems">
-    <li class='container-heading'>
+    <li class='container-heading' (blur)="handleBlur($event)">
       <span>Recent Items</span>
       </li>
-    <li *ngFor="let recentItem of recentItems" class='container' (click)='handleRecentItemClick($event, recentItem.url)'>
-      <span class="card-img">
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'recruit'" class='fal fa-crosshairs'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'studentathlete'" class='fal fa-backpack'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'contact'" class='fal fa-address-card'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'armsuser'" class='fal fa-flame'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'school'" class='fal fa-university'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'contactgroup'" class='fal fa-users'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'board'" class='fal fa-object-group'></i>
-        <i *ngIf="recentItem.entityTypeName.toLowerCase() == 'armsevent'" class='far fa-calendar'></i>
-      </span>
+    <li *ngFor="let recentItem of recentItems" class='container'  tabindex="0" (click)='handleRecentItemClick($event, recentItem.url)' (blur)="handleBlur($event)">
+      <span class="card-img"><i class="{{recentItem.icon}}"></i></span>
       <span class="card-main">
         {{recentItem.displayName}}
       </span>
     </li>
   </ul>
-  <ul *ngIf="showNoResultsFound">
-    <li class='container' >
-      <span class="card-img"><fa name='exclamation-circle'></fa></span>
-      <span class="card-main">No results found for '{{queryText}}'</span>
+  <ul *ngIf="showNoResultsFound" class='no_results'>
+    <li class='container' (blur)="handleBlur($event)">
+      <span class="card-img"><i class='fal fa-exclamation-circle'></i></span>
+      <span class="card-main">No results found for "{{queryText}}"</span>
       <span class="card-sub"></span>
     </li>
   </ul>
   <ul *ngIf="showSearchResults">
-    <li class='container' *ngFor="let user of users" tabindex="0" (click)='handleResultClick($event, user.url)'>
-      <ng-container *ngIf="user.e_type == 'R'">
-        <span class="card-img"><i class='fal fa-crosshairs'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub"> 
-          <ng-container *ngIf='user.g_year'>{{user.g_year}}</ng-container>
-          <ng-container *ngIf='user.g_year && user.state'>, </ng-container>
-          <ng-container *ngIf='user.state'>{{user.state}}</ng-container></span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'SA'">
-        <span class="card-img"><i class='fal fa-backpack'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub">{{user.sport_id}}</span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'C'">
-        <span class="card-img"><i class='fal fa-address-card'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub"></span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'AU'">
-        <span class="card-img"><i class='fal fa-user-circle'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub"></span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'SCH'">
-        <span class="card-img"><i class='fal fa-university'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub">
-          <ng-container *ngIf='user.city'>{{user.city}}</ng-container>
-          <ng-container *ngIf='user.city && user.state'>, </ng-container>
-          <ng-container *ngIf='user.state'>{{user.state}}</ng-container></span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'CG'">
-        <span class="card-img"><i class='fal fa-users'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub"></span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
-      <ng-container *ngIf="user.e_type == 'AE'">
-        <span class="card-img"><i class='fal fa-crosshairs'></i></span>
-        <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-        <span class="card-sub">
-          <ng-container *ngIf='user.city'>{{user.city}}</ng-container>
-          <ng-container *ngIf='user.city && user.state'>, </ng-container>
-          <ng-container *ngIf='user.state'>{{user.state}}</ng-container>
-        </span>
-        <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
-      </ng-container>
+    <li class='container' *ngFor="let user of users" tabindex="0" (click)='handleResultClick($event, user.url)' (blur)="handleBlur($event)">
+      <span class="card-img"><i class='{{user.icon}}'></i></span>
+      <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
+      <span class="card-sub" [innerHtml]="user.sub_text | safeHtml"></span> 
+      <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
     </li>
   </ul>
 </div>

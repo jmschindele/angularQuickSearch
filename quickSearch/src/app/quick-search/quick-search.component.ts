@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation, ɵCompiler_compileModuleSync__POST_R3__ } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { SearchResponse, SearchResult } from "../Searches/search.model";
 import { SearchService } from "../Searches/search.service";
@@ -31,7 +31,6 @@ export class QuickSearchComponent implements OnInit {
   showSearchResults: boolean = false;
   showNoResultsFound: boolean = false;
   maxScore: number;
-  cutOffScore: 2.5;
   userScores: number[] = [];
 
   //Use to turn on and off relevance and shown filters
@@ -44,17 +43,6 @@ export class QuickSearchComponent implements OnInit {
   @Output()
   searchResultSelect: EventEmitter<any> = new EventEmitter();
 
-  // filters  = 
-  // [
-  //   {name: 'Recruit', icon: 'fal fa-crosshairs', tipName: 'Recruits'}, 
-  //   {name:'StudentAthlete', icon:'fal fa-backpack', tipName: 'Student-Athletes'},
-  //   {name: 'Contact', icon:'fal fa-address-card', tipName: 'Contacts'},
-  //   {name: 'ArmsUser', icon:'fal fa-user-circle', tipName: 'ARMS Users'},
-  //   {name: 'School', icon: 'fal fa-university', tipName:'Schools'},
-  //   {name: 'ContactGroup', icon: 'fal fa-users', tipName: 'Contact Groups'},
-  //   // {name: 'board', icon:'fas fa-object-group'},
-  //   // {name: 'ArmsEvent', icon:'far fa-calendar'}
-  // ];
   filters: Filter[];
 
   @Input()
@@ -69,47 +57,25 @@ export class QuickSearchComponent implements OnInit {
   }
 
   getRecentItems = () => {
-
-    let params;
-
-    if (this.activeFilter) {
-    params = new HttpParams().set('entity', this.activeFilter);
-    }
-
-    return this.http.get<RecentItem[]>("/arms/search/history", {params}).subscribe(res => {
+    return this.http.get<RecentItem[]>("/arms/search/history").subscribe(res => {
       this.recentItems = res;
       this.showRecentItems = true;
     });
-  }
-
-  calcStandardDeviation(arr: number[]) {
-    let sumOfScores: number;
-    let sumOfDeviations = 0;
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    sumOfScores = arr.reduce(reducer, 0);
-    arr.map(x => sumOfScores = sumOfScores + x);
-    let mean = sumOfScores / arr.length;
-    arr.map(x => sumOfDeviations += (x - mean)*(x - mean));
-    let deviationMean = sumOfDeviations / arr.length;
-    let standardDeviation = Math.sqrt(deviationMean);
-    return standardDeviation;
   }
 
   performSearch = () => {
 
     let params: any[] = [];
     params.push({queryText: this.queryText});
-    if (this.activeFilter != null) params.push({entity: this.activeFilter});
+    if (this.activeFilter != null) params.push({entityType: this.activeFilter});
     if (!this.hasTextContent) return;
 
     this.searchService.getSearchResponses(params)
       .subscribe(res => {
         this.userScores = [];
-        this.maxScore = res.hits[0].score;
-        res.hits.map(user => this.userScores.push(user.score))
-        // this.users = res.hits.filter(user => user.score > this.calcStandardDeviation(this.userScores))
-        // res.hits.map(user => user.shown = user.score > this.calcStandardDeviation(this.userScores));
-        res.hits.map(user => user.shown = user.score > this.maxScore * 0.7);
+        // this.maxScore = res.hits[0].score;
+        // res.hits.map(user => this.userScores.push(user.score))
+        // res.hits.map(user => user.shown = user.score > this.maxScore * 0.7);
         // this.users = res.hits.filter(user => user.score > this.calcStandardDeviation(this.userScores))
         this.users = res.hits;
         this.isSearching = false;
@@ -121,10 +87,9 @@ export class QuickSearchComponent implements OnInit {
   handleFilterClick = e => {
 
     e.preventDefault();
-    e.currentTarget.blur();
     this.unselectFilters();
     this.selectCurrentFilter(e);
-
+    
   }
 
   unselectFilters = () => document.querySelectorAll('button.filter_toggle_button').forEach(el => {el.classList.remove('selected')});
@@ -138,25 +103,29 @@ export class QuickSearchComponent implements OnInit {
     this.hasTextContent ? this.performSearch() : this.getRecentItems();
   }
 
-  resetValues = () => {
-    this.isSearching = false;
+  resetValues = (clearText?: boolean) => {
+    if (clearText) {
+      this.queryText = null;
+      this.activeFilter = null;
+    }
     this.hasTextContent = false;
-    this.activeFilter = null;
+    this.isSearching = false;
     this.showRecentItems = false;
     this.showSearchResults = false;
     this.showNoResultsFound = false;
   }
 
   handleInput = e => {
+
     this.hasTextContent = e.target.value.length > 0;
     if (!this.hasTextContent) {
       this.getRecentItems()
-      return this.resetValues();
+      return this.resetValues(true);
     }
     this.showRecentItems = !this.hasTextContent;
     this.queryText = e.target.value;
     this.isSearching = this.queryText.length >= 2;
-    this.debounce(this.performSearch, 200);
+    if (this.isSearching) this.debounce(this.performSearch, 200);
   }
 
   handleClearInput = e => {
@@ -164,21 +133,30 @@ export class QuickSearchComponent implements OnInit {
     // instead of HTMLInputElement
     var input: any = document.getElementById('global_search_input');
     input.value = "";
-    this.resetValues();
+    this.resetValues(true);
   }
 
   handleInputFocus = e => {
     document.getElementById('quick-search-form').classList.add('form-focus');
+    let input: any = document.getElementById('global_search_input');
+    this.hasTextContent = input.value.trim().length;
     if (!this.hasTextContent) {
       this.getRecentItems();
+    } else {
+      this.queryText = input.value.trim();
+      this.performSearch();
     }
   }
 
-  handleInputBlur = e => {
+  handleBlur = e => {
     document.getElementById('quick-search-form').classList.remove('form-focus');
-    // if (this.showRecentItems) {
-    //   this.resetValues();
-    // }
+    //use a time out so the page is focused on the next element
+    //also required so that other click handlers are not prevented
+    setTimeout(()=> {
+      if (document.activeElement.parentElement.parentElement == document.querySelector('.pop-out-container')) return;
+      if (document.activeElement == document.querySelector('#global_search_input')) return;
+      this.resetValues(false);
+    }, 200)
   }
 
   debounce = (func, wait) => {
@@ -188,14 +166,55 @@ export class QuickSearchComponent implements OnInit {
 
   handleResultClick = (e, url) => {
     this.searchResultSelect.emit(url);
+    this.resetValues();
   }
 
   handleRecentItemClick = (e, url) => {
     this.recentItemSelect.emit(url);
+    this.resetValues()
   }
 
-handleShown = e => {
-  console.log('shown')
+  handleInputKeypress = e => {
+
+    let listItems: any[] = this.getListItems();
+    let index = this.getLiIndex(listItems) 
+
+    switch(e.which){
+      case 40: //down
+        e.preventDefault();
+        this.handleDownKey(listItems, index);
+        break;
+      case 39: // right
+      case 38: //up
+        e.preventDefault();
+        this.handleUpKey(listItems, index) //up
+        break;
+      case 37: //left
+      case 13 || 32: //space && enter
+        this.handleSelect(e, listItems, index);
+        break;
+      case 27: //esc
+        this.resetValues();
+        break; 
+      default:
+        break;
+    }
+  }
+
+  getListItems = () => Array.prototype.slice.call(document.querySelectorAll('li.container'));
+
+  getLiIndex = arr => arr.indexOf(document.activeElement);
+
+  handleDownKey = (arr: any[], i: number) => (i == -1 || i == arr.length - 1) ? arr[0].focus() : arr[i + 1].focus();
+  
+  handleUpKey = (arr: any[], i: number) => (i == -1 || i == 0) ? arr[arr.length -1].focus() : arr[i - 1].focus();
+
+  handleSelect = (e, arr: any[], i: number) => { 
+      if (i > -1) {
+        e.preventDefault();
+        arr[i].click();
+      }
+    return;
 }
 
 }

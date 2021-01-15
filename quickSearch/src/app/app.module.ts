@@ -37,6 +37,7 @@ export class AppModule {
   ngDoBootstrap() {
     const el = createCustomElement(QuickSearchComponent, {injector: this.injector});
     customElements.define('quick-search', el);
+
   }
 
  }

@@ -28,5 +28,6 @@ export interface SearchResult {
     u_id?: string,
     ncaa_e_num?: string,
     shown?: boolean,
-    url?: string
+    url?: string,
+    sub_text?: string
 }

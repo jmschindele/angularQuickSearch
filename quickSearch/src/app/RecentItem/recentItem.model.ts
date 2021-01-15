@@ -6,4 +6,5 @@ export interface RecentItem {
 
     url?: string;
 
+    icon?: string;
 }

@@ -127,7 +127,7 @@ div#quick-search-form {
     padding-left: 15px;
   }
 
-  li:not(.container-heading):hover {
+  li:not(.container-heading):hover, li:not(.container-heading):focus {
     background-color: $hightlight-blue !important;
     color: white !important;
     cursor: pointer !important;
@@ -145,6 +145,10 @@ ul {
   margin-left: 0 !important;
   overflow-y: auto!important;
   max-height: calc(80vh) !important;
+}
+
+ul.no_results {
+  overflow-y: none!important;
 }
 
 .card-img {
@@ -176,21 +180,6 @@ ul {
     "icon-image mainText"
     "icon-image subText" !important;
 
-}
-
-// .container-heading {
-//   color: #757575 !important;
-//   width: 90% !important;
-//   padding-top: $containerTopPadding !important;
-//   padding-bottom: $containerBottomPadding !important;
-//   padding-left: 15px;
-// }
-
-.no_results {
-  margin: 20px 50px 20px 0px;
-  font-style: italic;
-  color: #777;
-  font-size: 20px;
 }
 
 .filter_toggle_button {
