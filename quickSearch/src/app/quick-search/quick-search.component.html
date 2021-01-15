@@ -1,10 +1,15 @@
-<i class="fas fa-search"></i>
-<form>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+<div class="arms-quick-search" (keydown)='handleInputKeypress($event)'>
+
+<div class='css-grid-form' id='quick-search-form'>
   <label>
-    <span *ngIf="!isSearching && !hasTextContent"
-      ><i class="fas fa-search"></i
-    ></span>
-    <span *ngIf="isSearching"><i class="fas fa-spinner spin"></i></span>
+    <span *ngIf="!isSearching && !hasTextContent">
+      <i class="far fa-search"></i>
+    </span>
+    <span *ngIf="isSearching">
+      <i class="fas fa-circle-notch fa-spin"></i>
+    </span>
     <span
       *ngIf="!isSearching && hasTextContent"
       name="times-circle"
@@ -12,32 +17,58 @@
     >
       <i class="fas fa-times-circle"></i>
     </span>
-
     <span class="hidden">Global Search</span>
-    <input
+    <input style="padding: 0 0 !important;" autocomplete="off"
       type="text"
-      (input)="performSearch($event)"
+      (input)="handleInput($event)"
       id="global_search_input"
-    />
-  </label>
-  <div role="button" class="button-group">
-    <button
-      *ngFor="let filter of filters"
-      id="{{ filter.name }}_filter"
-      (click)="handleFilterClick($event)"
-    >
-      <span><i class="fas fa-{{ filter.icon }} 2x"></i></span>
-      <input
-        type="checkbox"
-        aria-hidden="true"
-        class="gsfilter hidden"
-        id="{{ filter.name }}_entity_filter"
+      (focus)="handleInputFocus($event)"
+      (blur)="handleBlur($event)"
       />
+  </label>
+</div>
+
+<div  [ngClass]="hasTextContent || showRecentItems ? 'pop-out-container' : 'hidden'">
+  <!-- [ngClass]="{'button-group': hasTextContent, 'hidden' : showRecentItems}" -->
+  <div role="button" *ngIf="showSearchResults || showNoResultsFound" class='button-group'>
+    <button  id="all_filter" (click)="handleFilterClick($event)" [ngClass]='{"filter_toggle_button": true,  "selected" : !activeFilter}' (blur)="handleBlur($event)">
+      <span>ALL</span>
+      <input type="radio" aria-hidden="true" class="gsfilter hidden" name="entity_filter" id="all_entity_filter" [checked]='activeFilter' />
+    </button>
+    <button *ngFor="let filter of filters" id="{{ filter.name }}_filter" (click)="handleFilterClick($event)" [ngClass]='{"filter_toggle_button tooltipme": true, "selected": filter.name == activeFilter}' title='{{filter.tipName}}' (blur)="handleBlur($event)">
+      <span><i class="{{ filter.icon }} 2x"></i></span>
+      <input type="radio" aria-hidden="true" class="gsfilter hidden" name="entity_filter" id="{{ filter.name }}_entity_filter"/>
     </button>
   </div>
-  <ul [ngClass]="{ hidden: users.length == 0 }">
-    <li *ngFor="let user of users">
-      {{ user.s_text }}, {{ user.city }}, {{ user.state }}
+
+  <ul *ngIf="showRecentItems">
+    <li class='container-heading' (blur)="handleBlur($event)">
+      <span>Recent Items</span>
+      </li>
+    <li *ngFor="let recentItem of recentItems" class='container'  tabindex="0" (click)='handleRecentItemClick($event, recentItem.url)' (blur)="handleBlur($event)">
+      <span class="card-img"><i class="{{recentItem.icon}}"></i></span>
+      <span class="card-main">
+        {{recentItem.displayName}}
+      </span>
     </li>
   </ul>
-</form>
+  <ul *ngIf="showNoResultsFound" class='no_results'>
+    <li class='container' (blur)="handleBlur($event)">
+      <span class="card-img"><i class='fal fa-exclamation-circle'></i></span>
+      <span class="card-main">No results found for "{{queryText}}"</span>
+      <span class="card-sub"></span>
+    </li>
+  </ul>
+  <ul *ngIf="showSearchResults">
+    <li class='container' *ngFor="let user of users" tabindex="0" (click)='handleResultClick($event, user.url)' (blur)="handleBlur($event)">
+      <span class="card-img"><i class='{{user.icon}}'></i></span>
+      <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
+      <span class="card-sub" [innerHtml]="user.sub_text | safeHtml"></span> 
+      <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
+    </li>
+  </ul>
+</div>
+</div>
+
+ 
+
