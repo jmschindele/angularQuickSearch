@@ -20,6 +20,7 @@
     <span class="hidden">Global Search</span>
     <input style="padding: 0 0 !important;" autocomplete="off"
       type="text"
+      (keyup)="handleKeyup($event)"
       (input)="handleInput($event)"
       id="global_search_input"
       (focus)="handleInputFocus($event)"
@@ -63,7 +64,7 @@
     <li class='container' *ngFor="let user of users" tabindex="0" (click)='handleResultClick($event, user.url)' (blur)="handleBlur($event)">
       <span class="card-img"><i class='{{user.icon}}'></i></span>
       <span class="card-main" [innerHtml]="user.s_text | safeHtml"></span>
-      <span class="card-sub" [innerHtml]="user.sub_text | safeHtml"></span> 
+      <span class="card-sub" [innerHtml]="user.sub_text | safeHtml"></span>
       <span *ngIf='this.debugmode'> Relevance: {{user.score}} Display: {{user.shown}}</span>
     </li>
   </ul>

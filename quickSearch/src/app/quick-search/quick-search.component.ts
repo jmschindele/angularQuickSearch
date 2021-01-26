@@ -65,10 +65,10 @@ export class QuickSearchComponent implements OnInit {
 
   performSearch = () => {
 
-    let params: any[] = [];
-    params.push({queryText: this.queryText});
-    if (this.activeFilter != null) params.push({entityType: this.activeFilter});
     if (!this.hasTextContent) return;
+    let params: any[] = [];
+    params.push({queryText: this.queryText.trim()});
+    if (this.activeFilter != null) params.push({entityType: this.activeFilter});
 
     this.searchService.getSearchResponses(params)
       .subscribe(res => {
@@ -116,16 +116,21 @@ export class QuickSearchComponent implements OnInit {
   }
 
   handleInput = e => {
-
-    this.hasTextContent = e.target.value.length > 0;
+    this.hasTextContent = e.target.value && e.target.value.trim().length > 0;
     if (!this.hasTextContent) {
       this.getRecentItems()
       return this.resetValues(true);
     }
     this.showRecentItems = !this.hasTextContent;
-    this.queryText = e.target.value;
+    this.queryText = e.target.value.trim();
     this.isSearching = this.queryText.length >= 2;
     if (this.isSearching) this.debounce(this.performSearch, 200);
+  }
+
+  handleKeyup = e => {
+    if (e.which === 8) {
+      if (e.target.value && e.target.value.trim().length) this.handleInput(e);
+    }
   }
 
   handleClearInput = e => {
@@ -184,12 +189,10 @@ export class QuickSearchComponent implements OnInit {
         e.preventDefault();
         this.handleDownKey(listItems, index);
         break;
-      case 39: // right
       case 38: //up
         e.preventDefault();
         this.handleUpKey(listItems, index) //up
         break;
-      case 37: //left
       case 13 || 32: //space && enter
         this.handleSelect(e, listItems, index);
         break;
