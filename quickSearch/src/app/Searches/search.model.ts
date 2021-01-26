@@ -29,5 +29,5 @@ export interface SearchResult {
     ncaa_e_num?: string,
     shown?: boolean,
     url?: string,
-    sub_text?: string
+    sub_text?: string,
 }
